@@ -52,6 +52,37 @@ TARGET_UPLOADS_BUCKET = os.environ.get("RUNTIME_UPLOADS_BUCKET", "pydata-amsterd
 # =====================================================================
 
 
+def _acquire_trigger_lock(storage_client: storage.Client, bucket_name: str, debounce_seconds: int = 15) -> bool:
+    """
+    Attempts to acquire a short-lived atomic trigger lock in GCS to debounce concurrent event bursts.
+    Returns True if the lock was acquired, False if a trigger was recently dispatched.
+    """
+    try:
+        bucket = storage_client.bucket(bucket_name)
+        lock_blob = bucket.blob(".trigger.lock")
+        now_ts = datetime.datetime.now(datetime.timezone.utc).timestamp()
+
+        try:
+            lock_blob.reload()
+            if lock_blob.metadata and "locked_at" in lock_blob.metadata:
+                locked_at = float(lock_blob.metadata["locked_at"])
+                if now_ts - locked_at < debounce_seconds:
+                    logger.info(
+                        f"Trigger lock active (acquired {now_ts - locked_at:.1f}s ago). "
+                        f"Debouncing concurrent trigger."
+                    )
+                    return False
+        except Exception:
+            pass
+
+        lock_blob.metadata = {"locked_at": str(now_ts)}
+        lock_blob.upload_from_string(b"", content_type="text/plain")
+        return True
+    except Exception as e:
+        logger.warning(f"Error checking/acquiring trigger lock: {e}")
+        return True
+
+
 def _validate_and_count_bucket_csvs(storage_client: storage.Client, bucket_name: str) -> tuple[int, list[str]]:
     """
     Inspects the GCS bucket and returns the count and list of valid CSV files.
@@ -171,7 +202,18 @@ def trigger_dag_gcf(cloudevent: CloudEvent) -> str:
         return status_msg
 
     # -----------------------------------------------------------------
-    # CHECK 7: Threshold Reached -> Validate Composer Web Server Config
+    # CHECK 7: Atomic Debounce Lock (Prevents simultaneous bursts from creating multiple runs)
+    # -----------------------------------------------------------------
+    if not _acquire_trigger_lock(storage_client, bucket_name, debounce_seconds=15):
+        debounce_msg = (
+            f"Debounced: A trigger was already dispatched within the last 15 seconds for 'gs://{bucket_name}'. "
+            f"Standing by."
+        )
+        logger.info(debounce_msg)
+        return debounce_msg
+
+    # -----------------------------------------------------------------
+    # CHECK 8: Threshold Reached -> Validate Composer Web Server Config
     # -----------------------------------------------------------------
     logger.info(
         f"🎯 [THRESHOLD MET] Threshold requirement ({TRIGGER_THRESHOLD} CSVs) satisfied! "
@@ -187,7 +229,7 @@ def trigger_dag_gcf(cloudevent: CloudEvent) -> str:
         raise RuntimeError(err)
 
     # -----------------------------------------------------------------
-    # CHECK 8: Trigger Airflow DAG via REST API
+    # CHECK 9: Trigger Airflow DAG via REST API
     # -----------------------------------------------------------------
     timestamp_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S")
     unique_run_id = f"gcs_threshold_trigger__{timestamp_utc}_{uuid.uuid4().hex[:6]}"

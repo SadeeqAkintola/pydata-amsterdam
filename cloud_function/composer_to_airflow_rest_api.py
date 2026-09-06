@@ -6,6 +6,7 @@ Apache Airflow DAG runs via the stable Airflow 2/3 REST API on Google Cloud Comp
 
 from __future__ import annotations
 
+import datetime
 import logging
 from typing import Any, Optional
 import google.auth
@@ -41,6 +42,35 @@ def make_composer_web_server_request(
     return AUTHED_SESSION.request(method, url, **kwargs)
 
 
+def has_queued_dag_runs(web_server_url: str, dag_id: str) -> bool:
+    """
+    Checks if there are currently any QUEUED DAG runs for the given DAG in Airflow.
+    If a run is already queued, Airflow will automatically process newly uploaded
+    files once the currently active run completes.
+    """
+    clean_base_url = web_server_url.strip().rstrip("/")
+    # Airflow 3 uses ?state=queued
+    url_v2 = f"{clean_base_url}/api/v2/dags/{dag_id}/dagRuns?state=queued"
+    try:
+        resp = make_composer_web_server_request(url_v2, method="GET", timeout=10)
+        if resp.status_code == 200:
+            runs = resp.json().get("dag_runs", [])
+            if runs:
+                logger.info(f"Found {len(runs)} queued run(s) for DAG '{dag_id}'.")
+                return True
+            return False
+        # Fallback to Airflow 2 endpoint if /api/v2 is not supported
+        if resp.status_code == 404:
+            url_v1 = f"{clean_base_url}/api/v1/dags/{dag_id}/dagRuns?state=queued"
+            resp_v1 = make_composer_web_server_request(url_v1, method="GET", timeout=10)
+            if resp_v1.status_code == 200:
+                runs = resp_v1.json().get("dag_runs", [])
+                return len(runs) > 0
+    except Exception as e:
+        logger.warning(f"Could not check queued DAG runs for '{dag_id}': {e}")
+    return False
+
+
 def trigger_dag(
     web_server_url: str,
     dag_id: str,
@@ -64,11 +94,22 @@ def trigger_dag(
     Raises:
         requests.HTTPError: If the Airflow API returns an unhandled HTTP error status.
     """
+    # Guard against stacking multiple queued runs when files are uploaded continuously
+    if has_queued_dag_runs(web_server_url, dag_id):
+        skip_msg = f"DAG '{dag_id}' already has a queued run waiting to execute. Skipping duplicate trigger."
+        logger.info(skip_msg)
+        return skip_msg
+
     clean_base_url = web_server_url.strip().rstrip("/")
-    endpoint = f"api/v1/dags/{dag_id}/dagRuns"
+    # Airflow 3 uses /api/v2, Airflow 2 uses /api/v1
+    endpoint = f"api/v2/dags/{dag_id}/dagRuns"
     request_url = f"{clean_base_url}/{endpoint}"
 
-    payload: dict[str, Any] = {"conf": data}
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    payload: dict[str, Any] = {
+        "logical_date": now_iso,
+        "conf": data
+    }
     if dag_run_id:
         payload["dag_run_id"] = dag_run_id
 
@@ -81,6 +122,25 @@ def trigger_dag(
         json=payload,
         headers={"Content-Type": "application/json", "Accept": "application/json"}
     )
+
+    # Fallback to /api/v1 if running on Airflow 2 where /api/v2 endpoint is not present
+    if response.status_code == 404 and "api/v2" in endpoint and "not found" in response.text.lower():
+        v1_url = f"{clean_base_url}/api/v1/dags/{dag_id}/dagRuns"
+        v1_payload: dict[str, Any] = {"conf": data}
+        if dag_run_id:
+            v1_payload["dag_run_id"] = dag_run_id
+        logger.info(f"/api/v2 returned 404, falling back to Airflow 2 /api/v1 endpoint: {v1_url}")
+        v1_response = make_composer_web_server_request(
+            v1_url,
+            method="POST",
+            json=v1_payload,
+            headers={"Content-Type": "application/json", "Accept": "application/json"}
+        )
+        if v1_response.status_code in (200, 201):
+            logger.info(f"Successfully triggered DAG '{dag_id}' via /api/v1 (HTTP {v1_response.status_code}).")
+            return v1_response.text
+        if v1_response.status_code not in (404,):
+            response = v1_response
 
     if response.status_code in (200, 201):
         logger.info(f"Successfully triggered DAG '{dag_id}' (HTTP {response.status_code}).")

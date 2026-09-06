@@ -475,6 +475,7 @@ WHERE (is_email_sent IS NULL OR is_email_sent = FALSE)
     default_args=default_args,
     schedule=None,
     catchup=False,
+    max_active_runs=1,
     tags=["pydata", "beam", "dataflow"],
 )
 def airflow_beam_dag():
