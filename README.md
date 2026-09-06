@@ -19,7 +19,7 @@ In this workshop, you build an automated, event-driven data pipeline on Google C
 graph TD
     A[Interactive Web App on Cloud Run] -->|1. Submit Form| B(GCS Uploads Bucket: pydata-amsterdam-uploads)
     B -->|2. Object Created Event| C[GCS Threshold Cloud Function 2nd Gen]
-    C -->|3. If CSVs >= 5, Trigger REST API| D[Cloud Composer 3 / Airflow]
+    C -->|3. If CSVs >= 6, Trigger REST API| D[Cloud Composer 3 / Airflow]
     D -->|4. Move CSVs to Staging| E(GCS Resources Bucket: pydata-amsterdam / initiated-runs)
     D -->|5. Launch Pipeline| F[Cloud Dataflow / Apache Beam]
     F -->|6. Read CSVs & Transform| E
@@ -338,7 +338,7 @@ gcloud storage cp airflow_beam_dag.py $DAGS_BUCKET/airflow_beam_dag.py
 
 ### Step 6: Deploy Event-Driven Threshold Cloud Function (2nd Gen)
 
-Deploy the Cloud Function that counts CSV files in `gs://pydata-amsterdam-uploads` and triggers the Airflow DAG when $\ge 5$ files are present:
+Deploy the Cloud Function that counts CSV files in `gs://pydata-amsterdam-uploads` and triggers the Airflow DAG when $\ge 6$ files are present:
 
 ```bash
 cd $HOME/pydata-amsterdam/cloud_function
@@ -351,7 +351,7 @@ gcloud functions deploy trigger-airflow-beam-dag \
   --entry-point=trigger_dag_gcf \
   --trigger-bucket=$UPLOADS_BUCKET \
   --trigger-location=$REGION \
-  --set-env-vars AIRFLOW_UI_URL=$AIRFLOW_UI_URL,TARGET_DAG_ID=airflow_beam_dag,TRIGGER_THRESHOLD=5 \
+  --set-env-vars AIRFLOW_UI_URL=$AIRFLOW_UI_URL,TARGET_DAG_ID=airflow_beam_dag,TRIGGER_THRESHOLD=6 \
   --service-account=$COMPUTE_SA
 ```
 
@@ -369,7 +369,7 @@ gcloud run deploy pydata-interactive-app \
   --source=. \
   --region=$REGION \
   --allow-unauthenticated \
-  --set-env-vars RUNTIME_UPLOADS_BUCKET=$UPLOADS_BUCKET,TRIGGER_THRESHOLD=5
+  --set-env-vars RUNTIME_UPLOADS_BUCKET=$UPLOADS_BUCKET,TRIGGER_THRESHOLD=6
 
 # Retrieve public web application URL
 export APP_URL=$(gcloud run services describe pydata-interactive-app --region=$REGION --format="value(status.url)")
@@ -386,7 +386,7 @@ echo "=================================================="
    - Attendees access the Cloud Run web application URL (or short link `bit.ly/pydata-amsterdam-demo`).
    - Each submission generates a CSV file and uploads it into `gs://pydata-amsterdam-uploads`.
 2. **Threshold Trigger**:
-   - When the 5th file is uploaded, the Cloud Function fires and triggers `airflow_beam_dag` via the Airflow REST API.
+   - When the 6th file is uploaded, the Cloud Function fires and triggers `airflow_beam_dag` via the Airflow REST API.
 3. **Pipeline Execution**:
    - Airflow stages files to `gs://pydata-amsterdam/initiated-runs`.
   - Dataflow processes the batch and appends records to BigQuery dataset `analytics_sessions`.

@@ -17,7 +17,7 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "pydata-amsterdam-secret-202
 
 # Environment configurations
 BUCKET_NAME = os.environ.get("RUNTIME_UPLOADS_BUCKET", "pydata-amsterdam-uploads")
-TRIGGER_THRESHOLD = int(os.environ.get("TRIGGER_THRESHOLD", "5"))
+TRIGGER_THRESHOLD = int(os.environ.get("TRIGGER_THRESHOLD", "6"))
 
 def upload_csv_to_gcs(name: str, email: str, location: str) -> str:
     """
