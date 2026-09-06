@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<!-- interactive_app/templates/index.html -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyData Amsterdam 2026 - Data Engineering Demo Portal</title>
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://amsterdam.pydata.org/favicon.ico">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.8);
+            --border-color: rgba(240, 246, 252, 0.1);
+            --primary-accent: #00e676; /* PyData Green */
+            --secondary-accent: #ff9100; /* PyData Orange */
+            --text-color: #c9d1d9;
+            --text-title: #f0f6f2;
+            --glow-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 230, 118, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(ff, 91, 0, 0.05) 0px, transparent 50%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Glassmorphism Header */
+        header {
+            text-align: center;
+            padding: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+
+        /* Flash Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            border: 1px solid transparent;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .alert-success {
+            background-color: rgba(0, 230, 118, 0.15);
+            border-color: var(--primary-accent);
+            color: #afffcd;
+        }
+
+        .alert-danger {
+            background-color: rgba(255, 91, 0, 0.15);
+            border-color: var(--secondary-accent);
+            color: #ffd0af;
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 235, 59, 0.1);
+            border-color: #fbc02d;
+            color: #fff9c4;
+        }
+
+        /* Main Form Card */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+
+        .card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-title);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: #8b949e;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-title);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-accent), #00b0ff);
+            color: #0d1117;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-shadow);
+        }
+
+        .btn-secondary {
+            background-color: #21262d;
+            color: var(--text-title);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #30363d;
+        }
+
+        /* Tracker Section */
+        .tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .progress-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #8b949e;
+        }
+
+        .progress-bar-bg {
+            background-color: #161b22;
+            height: 14px;
+            width: 100%;
+            border-radius: 7px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.5);
+        }
+
+        /* Collapsible uploads section */
+        .file-list {
+            margin-top: 15px;
+            max-height: 160px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: #0d1117;
+        }
+
+        .file-item {
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            color: #8b949e;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            background-color: rgba(0, 230, 118, 0.1);
+            color: var(--primary-accent);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #58a6ff;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <h1>PyData Amsterdam 2026</h1>
+            <p><strong>Orchestrating end-to-end Data Engineering Workflows</strong><br>
+               Leveraging Python, Apache Beam on Dataflow, and Apache Airflow
+            </p>
+        </header>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div>
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Interactive Form Card -->
+        <main class="card">
+            <h2>📝 Add Your Registration Details</h2>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Guido van Rossum" required autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="e.g. guido@python.org" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="location">Location / City</label>
+                    <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Amsterdam, NL" required autocomplete="address-level2">
+                </div>
+                <button type="submit" class="btn btn-primary">Generate CSV & Upload to GCP</button>
+            </form>
+        </main>
+
+        <!-- GCS Progress / Tracker Card -->
+        <section class="card tracker">
+            <h2>📊 Staged Files Tracker</h2>
+            <p style="font-size: 0.9rem; color: #8b949e;">
+                This pipeline triggers Apache Airflow automatically once the threshold of <strong>{{ threshold }}</strong> CSV uploads in GCS is met.
+            </p>
+
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span>Progress to Airflow Trigger</span>
+                    <strong>{{ file_count }} / {{ threshold }} Uploads</strong>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" style="width: {{ progress_percentage }}%"></div>
+                </div>
+            </div>
+
+            {% if required_files > 0 %}
+                <div class="alert alert-warning" style="text-align: center; margin: 5px 0;">
+                    ⏳ <strong>{{ required_files }} more file(s)</strong> needed to automatically trigger the end-to-end workflow!
+                </div>
+            {% else %}
+                <div class="alert alert-success" style="text-align: center; margin: 5px 0;">
+                    🚀 <strong>Threshold Met!</strong> Cloud Function has triggered/will trigger the workflow.
+                </div>
+            {% endif %}
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="window.location.reload();" class="btn btn-secondary" style="flex:1;">🔄 Refresh Tracker</button>
+            </div>
+
+            {% if files %}
+                <div style="margin-top: 15px;">
+                    <span style="font-size: 0.85rem; color: #8b949e; font-weight: 600; text-transform: uppercase;">Staged Files in Bucket:</span>
+                    <div class="file-list">
+                        {% for file in files %}
+                            <div class="file-item">
+                                <span>{{ file }}</span>
+                                <span class="badge">staged</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+
+        <a href="https://amsterdam.pydata.org/program#session/ASSD9U/" target="_blank" class="footer">
+            🌐 PyData Amsterdam 2026 Workshop Session Link
+        </a>
+
+    </div>
+
+</body>
+</html>
