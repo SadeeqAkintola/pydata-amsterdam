@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<!-- interactive_app/templates/success.html -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Registration Submitted - PyData Amsterdam 2026</title>
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://amsterdam.pydata.org/favicon.ico">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.85);
+            --card-border: rgba(240, 246, 252, 0.12);
+            --primary-accent: #00e676; /* PyData Green */
+            --secondary-accent: #ff9100; /* PyData Orange */
+            --accent-blue: #00b0ff;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --input-bg: #090d13;
+            --glow-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 24px 16px 40px;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 230, 118, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 145, 0, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Success Hero Card */
+        .hero-card {
+            text-align: center;
+            padding: 32px 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), var(--glow-shadow);
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: inline-block;
+            animation: bounce 1s ease;
+        }
+
+        .hero-card h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            font-weight: 800;
+            color: var(--primary-accent);
+            margin-bottom: 8px;
+        }
+
+        .hero-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Details List */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(240, 246, 252, 0.06);
+            font-size: 0.9rem;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--text-main);
+            font-weight: 600;
+            font-family: monospace;
+            text-align: right;
+            word-break: break-all;
+            max-width: 65%;
+        }
+
+        /* Tracker Section */
+        .tracker-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .stat-box {
+            background: rgba(9, 13, 19, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 8px;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-accent);
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .progress-bar-bg {
+            background-color: #161b22;
+            height: 14px;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            margin-bottom: 12px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .status-badge.waiting {
+            background: rgba(255, 145, 0, 0.12);
+            color: #ffd180;
+            border: 1px solid rgba(255, 145, 0, 0.3);
+        }
+
+        .status-badge.ready {
+            background: rgba(0, 230, 118, 0.12);
+            color: #b9f6ca;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            animation: pulseGlow 2s infinite;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 52px;
+            padding: 0 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-accent) 0%, #00c853 100%);
+            color: #0d1117;
+            box-shadow: 0 4px 16px rgba(0, 230, 118, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: #21262d;
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            height: 44px;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-12px); }
+            60% { transform: translateY(-6px); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 230, 118, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 230, 118, 0.5); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Hero Confirmation -->
+        <div class="hero-card">
+            <span class="success-icon">🎉</span>
+            <h1>Upload Successful!</h1>
+            <p>Your participant record has been formatted and streamed to Google Cloud Storage.</p>
+        </div>
+
+        <!-- Submission Summary -->
+        {% if submission %}
+        <div class="card">
+            <h2>📋 Submission Receipt</h2>
+            <div class="detail-row">
+                <span class="detail-label">Name</span>
+                <span class="detail-value">{{ submission.name }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ submission.email }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Location</span>
+                <span class="detail-value">{{ submission.location }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Uploaded File</span>
+                <span class="detail-value" style="color: var(--primary-accent);">{{ submission.filename }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Time</span>
+                <span class="detail-value">{{ submission.submitted_at }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Live Bucket Status Tracker -->
+        <section class="card">
+            <h2>📊 Live Pipeline Trigger Tracker</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+                Uploads bucket: <code style="color: var(--primary-accent);">gs://{{ bucket_name }}/</code>
+            </p>
+
+            <div class="tracker-stats">
+                <div class="stat-box">
+                    <div class="stat-value">{{ file_count }}</div>
+                    <div class="stat-label">In Bucket</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">{{ threshold }}</div>
+                    <div class="stat-label">Threshold</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" style="color: {% if required_files == 0 %}var(--primary-accent){% else %}var(--secondary-accent){% endif %};">
+                        {{ required_files }}
+                    </div>
+                    <div class="stat-label">Remaining</div>
+                </div>
+            </div>
+
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: {{ progress_percentage }}%;"></div>
+            </div>
+
+            {% if threshold_met %}
+                <div class="status-badge ready">
+                    <span>🚀 <strong>Threshold Met ({{ file_count }}/{{ threshold }})!</strong> Cloud Function has triggered or is triggering the end-to-end Airflow & Dataflow workflow!</span>
+                </div>
+            {% else %}
+                <div class="status-badge waiting">
+                    <span>⏳ <strong>{{ required_files }} more file(s)</strong> needed before the Cloud Function triggers Cloud Composer & Dataflow.</span>
+                </div>
+            {% endif %}
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+                <button onclick="window.location.reload();" class="btn btn-secondary">🔄 Refresh Live Tracker</button>
+                <a href="/" class="btn btn-primary">➕ Submit Another Participant</a>
+            </div>
+        </section>
+
+        <footer>
+            <a href="https://amsterdam.pydata.org/program" target="_blank">
+                🌐 PyData Amsterdam 2026 Workshop Schedule
+            </a>
+        </footer>
+
+    </div>
+
+</body>
+</html>

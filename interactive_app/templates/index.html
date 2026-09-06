@@ -3,231 +3,267 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyData Amsterdam 2026 - Data Engineering Demo Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PyData Amsterdam 2026 - Workshop Live Portal</title>
     <!-- Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="https://amsterdam.pydata.org/favicon.ico">
     <style>
         :root {
             --bg-color: #0d1117;
-            --card-bg: rgba(22, 27, 34, 0.8);
-            --border-color: rgba(240, 246, 252, 0.1);
+            --card-bg: rgba(22, 27, 34, 0.85);
+            --card-border: rgba(240, 246, 252, 0.12);
             --primary-accent: #00e676; /* PyData Green */
             --secondary-accent: #ff9100; /* PyData Orange */
-            --text-color: #c9d1d9;
-            --text-title: #f0f6f2;
-            --glow-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+            --accent-blue: #00b0ff;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --input-bg: #090d13;
+            --glow-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 40px 20px;
-            overflow-x: hidden;
+            padding: 24px 16px 40px;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(0, 230, 118, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(ff, 91, 0, 0.05) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(0, 230, 118, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 145, 0, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
         .container {
             width: 100%;
-            max-width: 750px;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
         }
 
         /* Glassmorphism Header */
         header {
             text-align: center;
-            padding: 30px;
+            padding: 24px 20px;
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .badge-tag {
+            display: inline-block;
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--primary-accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 230, 118, 0.3);
         }
 
         header h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 2.2rem;
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            background: linear-gradient(135deg, var(--primary-accent) 0%, var(--secondary-accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
         header p {
-            font-size: 0.95rem;
-            color: #8b949e;
+            font-size: 0.9rem;
+            color: var(--text-muted);
             line-height: 1.5;
         }
 
         /* Flash Alerts */
         .alert {
-            padding: 15px;
-            border-radius: 10px;
+            padding: 14px 18px;
+            border-radius: 12px;
             font-size: 0.9rem;
-            margin-bottom: 5px;
             border: 1px solid transparent;
-            animation: fadeIn 0.4s ease-in-out;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .alert-danger {
+            background-color: rgba(255, 68, 68, 0.15);
+            border-color: rgba(255, 68, 68, 0.4);
+            color: #ff9999;
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 145, 0, 0.15);
+            border-color: rgba(255, 145, 0, 0.4);
+            color: #ffd180;
         }
 
         .alert-success {
             background-color: rgba(0, 230, 118, 0.15);
-            border-color: var(--primary-accent);
-            color: #afffcd;
+            border-color: rgba(0, 230, 118, 0.4);
+            color: #b9f6ca;
         }
 
-        .alert-danger {
-            background-color: rgba(255, 91, 0, 0.15);
-            border-color: var(--secondary-accent);
-            color: #ffd0af;
-        }
-
-        .alert-warning {
-            background-color: rgba(255, 235, 59, 0.1);
-            border-color: #fbc02d;
-            color: #fff9c4;
-        }
-
-        /* Main Form Card */
+        /* Cards */
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            transition: border-color 0.3s ease;
-        }
-
-        .card:hover {
-            border-color: rgba(0, 230, 118, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
         .card h2 {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--text-title);
-            font-weight: 600;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
             gap: 8px;
         }
 
+        /* Form Inputs (Mobile Optimized) */
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
         .form-group label {
-            font-size: 0.85rem;
-            color: #8b949e;
-            font-weight: 500;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 16px;
-            background-color: #0d1117;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-title);
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
+            height: 50px;
+            padding: 0 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary-accent);
-            box-shadow: 0 0 8px rgba(0, 230, 118, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: #484f58;
+            font-size: 0.95rem;
         }
 
         .btn {
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            padding: 14px;
+            height: 52px;
+            padding: 0 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
             text-decoration: none;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-accent), #00b0ff);
+            background: linear-gradient(135deg, var(--primary-accent) 0%, #00c853 100%);
             color: #0d1117;
-            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 230, 118, 0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--glow-shadow);
+        .btn-primary:active {
+            transform: scale(0.98);
         }
 
         .btn-secondary {
             background-color: #21262d;
-            color: var(--text-title);
-            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            height: 44px;
+            font-size: 0.9rem;
         }
 
-        .btn-secondary:hover {
+        .btn-secondary:hover, .btn-secondary:active {
             background-color: #30363d;
         }
 
         /* Tracker Section */
-        .tracker {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .tracker-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 16px 0;
+            text-align: center;
         }
 
-        .progress-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin: 10px 0;
+        .stat-box {
+            background: rgba(9, 13, 19, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 8px;
         }
 
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #8b949e;
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-accent);
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
         }
 
         .progress-bar-bg {
             background-color: #161b22;
             height: 14px;
             width: 100%;
-            border-radius: 7px;
+            border-radius: 8px;
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--card-border);
+            margin-bottom: 12px;
         }
 
         .progress-bar-fill {
@@ -235,67 +271,93 @@
             height: 100%;
             border-radius: 6px;
             transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 8px rgba(0, 230, 118, 0.5);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
         }
 
-        /* Collapsible uploads section */
+        .status-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .status-badge.waiting {
+            background: rgba(255, 145, 0, 0.12);
+            color: #ffd180;
+            border: 1px solid rgba(255, 145, 0, 0.3);
+        }
+
+        .status-badge.ready {
+            background: rgba(0, 230, 118, 0.12);
+            color: #b9f6ca;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            animation: pulseGlow 2s infinite;
+        }
+
         .file-list {
-            margin-top: 15px;
-            max-height: 160px;
+            margin-top: 12px;
+            max-height: 140px;
             overflow-y: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: #0d1117;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background-color: var(--input-bg);
         }
 
         .file-item {
-            padding: 10px 15px;
-            font-size: 0.85rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 8px 12px;
+            font-size: 0.78rem;
+            border-bottom: 1px solid rgba(240, 246, 252, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: monospace;
-            color: #8b949e;
+            color: var(--text-muted);
+            word-break: break-all;
         }
 
         .file-item:last-child {
             border-bottom: none;
         }
 
-        .badge {
-            background-color: rgba(0, 230, 118, 0.1);
+        .badge-staged {
+            background: rgba(0, 230, 118, 0.1);
             color: var(--primary-accent);
-            padding: 2px 8px;
+            font-size: 0.68rem;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
-            border: 1px solid rgba(0, 230, 118, 0.2);
+            flex-shrink: 0;
+            margin-left: 8px;
         }
 
-        .footer {
+        footer {
             text-align: center;
-            font-size: 0.8rem;
-            color: #58a6ff;
-            margin-top: 15px;
-            text-decoration: none;
+            margin-top: 10px;
         }
 
-        /* Animation */
+        footer a {
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0d1117;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 3px;
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 230, 118, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 230, 118, 0.5); }
         }
     </style>
 </head>
@@ -304,29 +366,26 @@
     <div class="container">
         
         <header>
-            <h1>PyData Amsterdam 2026</h1>
-            <p><strong>Orchestrating end-to-end Data Engineering Workflows</strong><br>
-               Leveraging Python, Apache Beam on Dataflow, and Apache Airflow
-            </p>
+            <span class="badge-tag">PyData Amsterdam 2026</span>
+            <h1>Workshop Registration</h1>
+            <p>Enter your details below to generate a data record and trigger the Cloud Dataflow & Airflow pipeline live!</p>
         </header>
 
-        <!-- Flash messages -->
+        <!-- Flash alerts -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
-            <div>
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                  {{ message }}
-                </div>
-              {% endfor %}
-            </div>
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
           {% endif %}
         {% endwith %}
 
-        <!-- Interactive Form Card -->
+        <!-- Registration Form -->
         <main class="card">
-            <h2>📝 Add Your Registration Details</h2>
-            <form method="POST">
+            <h2>📝 Participant Details</h2>
+            <form method="POST" action="/">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Guido van Rossum" required autocomplete="name">
@@ -336,52 +395,61 @@
                     <input type="email" id="email" name="email" class="form-control" placeholder="e.g. guido@python.org" required autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="location">Location / City</label>
+                    <label for="location">City / Location</label>
                     <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Amsterdam, NL" required autocomplete="address-level2">
                 </div>
-                <button type="submit" class="btn btn-primary">Generate CSV & Upload to GCP</button>
+                <button type="submit" class="btn btn-primary">🚀 Submit & Upload to GCS</button>
             </form>
         </main>
 
-        <!-- GCS Progress / Tracker Card -->
-        <section class="card tracker">
-            <h2>📊 Staged Files Tracker</h2>
-            <p style="font-size: 0.9rem; color: #8b949e;">
-                This pipeline triggers Apache Airflow automatically once the threshold of <strong>{{ threshold }}</strong> CSV uploads in GCS is met.
+        <!-- Live Bucket Status Tracker -->
+        <section class="card">
+            <h2>📊 Live Pipeline Trigger Tracker</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+                Target bucket: <code style="color: var(--primary-accent);">gs://{{ bucket_name }}/</code>
             </p>
 
-            <div class="progress-container">
-                <div class="progress-header">
-                    <span>Progress to Airflow Trigger</span>
-                    <strong>{{ file_count }} / {{ threshold }} Uploads</strong>
+            <div class="tracker-stats">
+                <div class="stat-box">
+                    <div class="stat-value">{{ file_count }}</div>
+                    <div class="stat-label">In Bucket</div>
                 </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" style="width: {{ progress_percentage }}%"></div>
+                <div class="stat-box">
+                    <div class="stat-value">{{ threshold }}</div>
+                    <div class="stat-label">Threshold</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" style="color: {% if required_files == 0 %}var(--primary-accent){% else %}var(--secondary-accent){% endif %};">
+                        {{ required_files }}
+                    </div>
+                    <div class="stat-label">Remaining</div>
                 </div>
             </div>
 
-            {% if required_files > 0 %}
-                <div class="alert alert-warning" style="text-align: center; margin: 5px 0;">
-                    ⏳ <strong>{{ required_files }} more file(s)</strong> needed to automatically trigger the end-to-end workflow!
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: {{ progress_percentage }}%;"></div>
+            </div>
+
+            {% if threshold_met %}
+                <div class="status-badge ready">
+                    <span>⚡ Threshold Met ({{ file_count }}/{{ threshold }})! Cloud Function will trigger Airflow.</span>
                 </div>
             {% else %}
-                <div class="alert alert-success" style="text-align: center; margin: 5px 0;">
-                    🚀 <strong>Threshold Met!</strong> Cloud Function has triggered/will trigger the workflow.
+                <div class="status-badge waiting">
+                    <span>⏳ Need <strong>{{ required_files }} more</strong> file(s) to reach threshold of {{ threshold }}</span>
                 </div>
             {% endif %}
 
-            <div style="display:flex; gap:10px;">
-                <button onclick="window.location.reload();" class="btn btn-secondary" style="flex:1;">🔄 Refresh Tracker</button>
-            </div>
+            <button onclick="window.location.reload();" class="btn btn-secondary">🔄 Refresh Live Count</button>
 
             {% if files %}
-                <div style="margin-top: 15px;">
-                    <span style="font-size: 0.85rem; color: #8b949e; font-weight: 600; text-transform: uppercase;">Staged Files in Bucket:</span>
+                <div style="margin-top: 16px;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Current Files in Uploads Bucket ({{ files|length }}):</span>
                     <div class="file-list">
                         {% for file in files %}
                             <div class="file-item">
                                 <span>{{ file }}</span>
-                                <span class="badge">staged</span>
+                                <span class="badge-staged">staged</span>
                             </div>
                         {% endfor %}
                     </div>
@@ -389,11 +457,14 @@
             {% endif %}
         </section>
 
-        <a href="https://amsterdam.pydata.org/program#session/ASSD9U/" target="_blank" class="footer">
-            🌐 PyData Amsterdam 2026 Workshop Session Link
-        </a>
+        <footer>
+            <a href="https://amsterdam.pydata.org/program" target="_blank">
+                🌐 PyData Amsterdam 2026 Workshop Schedule
+            </a>
+        </footer>
 
     </div>
 
 </body>
 </html>
+
