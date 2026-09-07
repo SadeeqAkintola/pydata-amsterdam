@@ -65,6 +65,17 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .brand-logo {
+            height: 48px;
+            max-width: 220px;
+            object-fit: contain;
+            margin-bottom: 14px;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
         }
 
         .badge-tag {
@@ -366,6 +377,7 @@
     <div class="container">
         
         <header>
+            <img src="https://images.squarespace-cdn.com/content/v1/677e96eee4471153ee689b3a/1736349435399-33XKES8VHLOLKE2C1NXQ/PyData_logo.png?format=1500w" alt="PyData Amsterdam 2026 Logo" class="brand-logo" loading="eager">
             <span class="badge-tag">PyData Amsterdam 2026</span>
             <h1>Workshop Registration</h1>
             <p>Enter your details below to generate a data record and trigger the Cloud Dataflow & Airflow pipeline live!</p>
@@ -385,22 +397,50 @@
         <!-- Registration Form -->
         <main class="card">
             <h2>📝 Participant Details</h2>
-            <form method="POST" action="/">
+            <form id="regForm" method="POST" action="/" onsubmit="return validateForm(event)">
                 <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Guido van Rossum" required autocomplete="name">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Guido van Rossum" required autocomplete="name" minlength="2">
                 </div>
                 <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="e.g. guido@python.org" required autocomplete="email">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="e.g. guido@python.org" required autocomplete="email" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}">
                 </div>
                 <div class="form-group">
-                    <label for="location">City / Location</label>
-                    <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Amsterdam, NL" required autocomplete="address-level2">
+                    <label for="location">City / Location *</label>
+                    <input type="text" id="location" name="location" class="form-control" placeholder="e.g Amsterdam, Lisbon, Lagos or Madrid" required autocomplete="address-level2" minlength="2">
                 </div>
-                <button type="submit" class="btn btn-primary">🚀 Submit & Upload to GCS</button>
+                <button type="submit" id="submitBtn" class="btn btn-primary">🚀 Submit & Upload to GCS</button>
             </form>
         </main>
+
+        <script>
+            function validateForm(e) {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const location = document.getElementById('location').value.trim();
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                if (!name || !email || !location) {
+                    alert('Please fill in all required fields (Name, Email, Location).');
+                    e.preventDefault();
+                    return false;
+                }
+
+                if (!emailRegex.test(email)) {
+                    alert('Please enter a valid email address format (e.g. user@domain.com).');
+                    document.getElementById('email').focus();
+                    e.preventDefault();
+                    return false;
+                }
+
+                const btn = document.getElementById('submitBtn');
+                btn.innerHTML = '⏳ Uploading to GCS...';
+                btn.style.opacity = '0.7';
+                btn.style.pointerEvents = 'none';
+                return true;
+            }
+        </script>
 
         <!-- Live Bucket Status Tracker -->
         <section class="card">

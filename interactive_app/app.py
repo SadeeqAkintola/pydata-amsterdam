@@ -70,21 +70,24 @@ def get_bucket_status() -> dict[str, Any]:
     }
 
 
+EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+
+
 def upload_csv_to_gcs(name: str, email: str, location: str) -> tuple[str, str]:
     """
-    Generates a unique filename combining details and a timestamp string,
+    Generates a unique anonymized filename combining location, timestamp, and random hex,
     then writes the CSV record into gs://pydata-amsterdam-uploads/.
+    Example format: Lisbon_20260906_225857_f5a74f.csv
     """
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_NAME)
 
-    # Sanitize components for safe, readable GCS filename
-    name_slug = re.sub(r"[^a-zA-Z0-9]", "", name)[:15] or "participant"
-    loc_slug = re.sub(r"[^a-zA-Z0-9]", "", location)[:15] or "location"
+    # Sanitize location component for safe, readable GCS filename
+    loc_slug = re.sub(r"[^a-zA-Z0-9_-]", "", location.strip())[:25] or "Location"
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S")
     rand_hex = uuid.uuid4().hex[:6]
 
-    filename = f"registrations_{loc_slug}_{name_slug}_{timestamp}_{rand_hex}.csv"
+    filename = f"{loc_slug}_{timestamp}_{rand_hex}.csv"
 
     # Clean CSV values (escape quotes)
     name_clean = name.replace('"', '""')
@@ -111,8 +114,8 @@ def index():
             flash("All fields (Name, Email, Location) are required!", "danger")
             return redirect(url_for("index"))
 
-        if "@" not in email or "." not in email:
-            flash("Please enter a valid email address.", "danger")
+        if not EMAIL_REGEX.match(email):
+            flash("Please enter a valid email address (e.g. name@example.com).", "danger")
             return redirect(url_for("index"))
 
         try:
