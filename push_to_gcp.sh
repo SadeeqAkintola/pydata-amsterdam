@@ -12,7 +12,7 @@ PROJECT_ID="pydata-amsterdam-data-demo"
 RESOURCES_BUCKET="pydata-amsterdam"
 # Replace with the GCS bucket corresponding to your Managed Airflow (Composer) DAG folder
 DAGS_BUCKET="europe-west4-pydata-amsterd-3b7237b6-bucket/dags" 
-ACCOUNT="admin@sadeeq.altostrat.com"
+ACCOUNT="<YOUR_ADMIN_EMAIL>"
 # =====================================================================
 
 echo "--------------------------------------------------"
