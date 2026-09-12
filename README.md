@@ -345,8 +345,20 @@ Deploy the workflow to Cloud Composer 3 (`pydata-amsterdam`) running Apache Airf
 
 <img width="2050" height="329" alt="image" src="https://github.com/user-attachments/assets/e6bf9261-d68c-45fb-aea2-c48d9c125491" />
 
+Open DAG folder
+<img width="2046" height="525" alt="image" src="https://github.com/user-attachments/assets/610858fa-81d2-4681-a229-95189076a899" />
+
+
+Place DAGs in the GCS folder
+<img width="2046" height="765" alt="image" src="https://github.com/user-attachments/assets/174858f7-a3e6-46e1-98eb-c3866c083829" />
+
+
 Airflow UI
 <img width="2050" height="965" alt="image" src="https://github.com/user-attachments/assets/c19cee53-f767-429b-8c78-05f68ea180a3" />
+
+Install Packages:
+<img width="2046" height="765" alt="image" src="https://github.com/user-attachments/assets/e7bee330-af2a-4e80-b7c4-2332ab120590" />
+
 
 Available DAGs
 <img width="2050" height="557" alt="image" src="https://github.com/user-attachments/assets/091f27b6-6ded-43b4-80a5-f04970265474" />
