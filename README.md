@@ -276,7 +276,9 @@ pip install "apache-beam[gcp]>=2.57.0"
 Create a local sample CSV file and execute the pipeline using `DirectRunner` to verify logic and write directly to BigQuery:
 
 <!-- Screenshot Placeholder: Beam DirectRunner Local Terminal Output -->
-> 📸 **Screenshot Placeholder**: *[Terminal output showing successful Beam pipeline execution with DirectRunner]*
+<img width="2050" height="910" alt="image" src="https://github.com/user-attachments/assets/1b5178d3-cdc8-40b3-a1ec-34cf242802d8" />
+
+> 📸 **Screenshot**: *[Terminal output showing successful Beam pipeline execution with DirectRunner]*
 
 ```bash
 # 1. Create a local test CSV file
@@ -297,13 +299,16 @@ bq query --project_id=$PROJECT_ID --use_legacy_sql=false --location=$BIGQUERY_LO
   SELECT name, email, location, timestamp FROM ${BQ_FQN} WHERE email = 'guido@python.org';
 "
 ```
+<img width="2050" height="479" alt="image" src="https://github.com/user-attachments/assets/dfbbbe60-2466-4bb3-8534-650f755ce8f4" />
 
 #### 4.3. Run Apache Beam on Cloud Dataflow (`DataflowRunner`)
 
 Upload a sample file to GCS and run the Beam pipeline as a standalone Cloud Dataflow job:
 
 <!-- Screenshot Placeholder: Cloud Dataflow Job Execution Graph -->
-> 📸 **Screenshot Placeholder**: *[Google Cloud Dataflow Console showing the active/completed job execution DAG graph and throughput metrics]*
+
+
+> 📸 **Screenshot**: *[Google Cloud Dataflow Console showing the active/completed job execution DAG graph and throughput metrics]*
 
 ```bash
 # 1. Upload sample CSV to GCS initiated-runs folder
@@ -338,8 +343,18 @@ gcloud storage ls gs://$RESOURCES_BUCKET/beam_pipeline.py
 
 Deploy the workflow to Cloud Composer 3 (`pydata-amsterdam`) running Apache Airflow 3.
 
+<img width="2050" height="329" alt="image" src="https://github.com/user-attachments/assets/e6bf9261-d68c-45fb-aea2-c48d9c125491" />
+
+Airflow UI
+<img width="2050" height="965" alt="image" src="https://github.com/user-attachments/assets/c19cee53-f767-429b-8c78-05f68ea180a3" />
+
+Available DAGs
+<img width="2050" height="557" alt="image" src="https://github.com/user-attachments/assets/091f27b6-6ded-43b4-80a5-f04970265474" />
+
 <!-- Screenshot Placeholder: Cloud Composer 3 Environment & Airflow UI -->
-> 📸 **Screenshot Placeholder**: *[Cloud Composer 3 environment page in GCP Console and Airflow 3 Web UI showing the DAG list]*
+<img width="2050" height="706" alt="image" src="https://github.com/user-attachments/assets/08c7f67b-a8a6-43f2-8b8f-3755a3e697f6" />
+
+> 📸 **Screenshot**: *[Cloud Composer 3 environment page in GCP Console and Airflow 3 Web UI showing the DAG list]*
 
 ```bash
 export COMPOSER_ENV_NAME="pydata-amsterdam"
@@ -377,13 +392,17 @@ gcloud storage cp airflow_beam_dag.py $DAGS_BUCKET/airflow_beam_dag.py
 ```
 
 ---
+DAG Execution:
+<img width="2050" height="1189" alt="image" src="https://github.com/user-attachments/assets/6cb0df57-77c1-4c15-be86-a1de8bf0f020" />
 
 ### Step 6: Deploy Event-Driven Threshold Cloud Function (2nd Gen)
 
 Deploy the Cloud Function that counts CSV files in `gs://pydata-amsterdam-uploads` and triggers the Airflow DAG via the Airflow REST API when $\ge 6$ files are present:
 
 <!-- Screenshot Placeholder: Cloud Function 2nd Gen Configuration & Triggers -->
-> 📸 **Screenshot Placeholder**: *[Cloud Functions Console showing trigger-airflow-beam-dag (2nd Gen) with GCS bucket event trigger]*
+<img width="2050" height="1189" alt="image" src="https://github.com/user-attachments/assets/cedcf82d-7bdb-47ab-8084-717b44bb6630" />
+
+> 📸 **Screenshot**: *[Cloud Functions Console showing trigger-airflow-beam-dag (2nd Gen) with GCS bucket event trigger]*
 
 ```bash
 cd $HOME/pydata-amsterdam/cloud_function
@@ -407,7 +426,9 @@ gcloud functions deploy trigger-airflow-beam-dag \
 Deploy the audience participation portal to Cloud Run:
 
 <!-- Screenshot Placeholder: Cloud Run Service Dashboard & Web UI -->
-> 📸 **Screenshot Placeholder**: *[Cloud Run Service Dashboard for pydata-interactive-app and the Live Portal UI displaying the modern form and logo]*
+<img width="2050" height="1185" alt="image" src="https://github.com/user-attachments/assets/ea84acab-2892-446e-9e09-30a49156a53b" />
+
+> 📸 **Screenshot**: *[Cloud Run Service Dashboard for pydata-interactive-app and the Live Portal UI displaying the modern form and logo]*
 
 ```bash
 cd $HOME/pydata-amsterdam/interactive_app
@@ -428,7 +449,9 @@ echo "=================================================="
 ```
 
 <!-- Screenshot Placeholder: Interactive App Submission Form & Live Progress Tracker -->
-> 📸 **Screenshot Placeholder**: *[Interactive Web App showing user entry form (Name, Email, Location) and Success confirmation screen with real-time upload progress bar]*
+<img width="2050" height="1139" alt="image" src="https://github.com/user-attachments/assets/2f6efc0d-8be1-4b6e-98d7-db6984e3728a" />
+
+> 📸 **Screenshot**: *[Interactive Web App showing user entry form (Name, Email, Location) and Success confirmation screen with real-time upload progress bar]*
 
 ---
 
@@ -446,15 +469,27 @@ echo "=================================================="
    - Files are archived into `gs://pydata-amsterdam/completed-runs`.
 
 <!-- Screenshot Placeholder: Airflow 3 DAG Execution Graph (All Tasks Green) -->
-> 📸 **Screenshot Placeholder**: *[Airflow Web UI showing successful execution of airflow_beam_dag with all task nodes highlighted in green]*
+<img width="2050" height="426" alt="image" src="https://github.com/user-attachments/assets/bdd39121-fa3b-4d42-9c8b-5ed0fdb9cefc" />
+
+> 📸 **Screenshot**: *[Airflow Web UI showing successful execution of airflow_beam_dag with all task nodes highlighted in green]*
 
 <!-- Screenshot Placeholder: AI-Enriched Email with Gemini Fun Facts & Travel Poster Attachment -->
-> 📸 **Screenshot Placeholder**: *[Received email showing Gemini 2.5 Flash location fun facts, HTML styling, and the personalized travel poster attachment generated with Gemini 2.5 Flash Image]*
+<img width="1250" height="544" alt="image" src="https://github.com/user-attachments/assets/38f5cf5c-c7c1-4c98-9308-a61f304b307f" />
+..
+<img width="1250" height="911" alt="image" src="https://github.com/user-attachments/assets/a63d47c3-dc73-492e-9143-e5998129efeb" />
+..
+<img width="1250" height="911" alt="image" src="https://github.com/user-attachments/assets/5a16f512-02f6-4d23-9fc7-28dc3fc67f4b" />
+
+
+
+> 📸 **Screenshot**: *[Received email showing Gemini 2.5 Flash location fun facts, HTML styling, and the personalized travel poster attachment generated with Gemini 2.5 Flash Image]*
 
 4. **Verification Queries in Cloud Shell**:
 
 <!-- Screenshot Placeholder: BigQuery Table Results -->
-> 📸 **Screenshot Placeholder**: *[BigQuery query results displaying processed records with is_email_sent set to true]*
+<img width="2046" height="765" alt="image" src="https://github.com/user-attachments/assets/b6c9aa5f-4cf8-40fd-9ceb-1348cd6d2696" />
+
+> 📸 **Screenshot**: *[BigQuery query results displaying processed records with is_email_sent set to true]*
 
 ```bash
 # 1. Check Cloud Function trigger logs
