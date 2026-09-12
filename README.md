@@ -1,8 +1,6 @@
 # PyData Amsterdam 2026 Workshop
 ## Reuniting the two distant cousins: Orchestrating your end-to-end Data Engineering Workflow Leveraging Python in Apache Beam and Apache Airflow
 
-<!-- Screenshot Placeholder: Workshop Hero Banner / Architecture Flow -->
-> 📸 **Screenshot Placeholder**: *[PyData Amsterdam Workshop Hero Banner or Architecture Flow Diagram]*
 
 Welcome! This is the comprehensive, step-by-step implementation guide for the interactive workshop at **PyData Amsterdam 2026**.
 
@@ -18,8 +16,8 @@ In this workshop, you build an automated, event-driven data pipeline on Google C
 
 ## 🏗️ Architecture Overview
 
-<!-- Screenshot Placeholder: End-to-End System Architecture Overview -->
-> 📸 **Screenshot Placeholder**: *[End-to-End Architecture Overview diagram illustrating the flow from Cloud Run to GCS, Cloud Functions, Cloud Composer 3, Dataflow, BigQuery, Vertex AI, and SendGrid]*
+<!-- End-to-End System Architecture Overview -->
+> 📸 *[End-to-End Architecture Overview diagram illustrating the flow from Cloud Run to GCS, Cloud Functions, Cloud Composer 3, Dataflow, BigQuery, Vertex AI, and SendGrid]*
 
 ```mermaid
 graph TD
@@ -44,9 +42,10 @@ graph TD
 ### Step 0: Cloud Shell Activation & Environment Setup
 
 Open [Google Cloud Console](https://console.cloud.google.com) and click **Activate Cloud Shell** (`>_`).
+<img width="2050" height="619" alt="image" src="https://github.com/user-attachments/assets/e8d620e3-4e8e-45dd-872f-10279d4ae783" />
 
 <!-- Screenshot Placeholder: Cloud Shell Activation in GCP Console -->
-> 📸 **Screenshot Placeholder**: *[GCP Console showing the Cloud Shell activation button (>_) and terminal pane]*
+> 📸 **Screenshot**: *[GCP Console showing the Cloud Shell activation button (>_) and terminal pane]*
 
 ```bash
 # 1. Authenticate with your administrator account
@@ -104,7 +103,9 @@ Dataflow uses the project `default` VPC and its auto-created regional subnet.
 The commands below are idempotent: an existing network or subnet is reused.
 
 <!-- Screenshot Placeholder: VPC Network and Subnet in GCP Console -->
-> 📸 **Screenshot Placeholder**: *[GCP Console showing VPC Networks > default network with europe-west4 regional subnetwork]*
+<img width="2050" height="1129" alt="image" src="https://github.com/user-attachments/assets/13c18ce4-e6fb-42e6-bf01-d3fb4dd109a8" />
+
+> 📸 **Screenshot**: *[GCP Console showing VPC Networks > default network with europe-west4 regional subnetwork]*
 
 ```bash
 export DATAFLOW_NETWORK="default"
@@ -147,7 +148,9 @@ for the default subnet or grant an exception before running Dataflow.
 Create your Cloud Storage buckets using modern `gcloud storage` commands:
 
 <!-- Screenshot Placeholder: Cloud Storage Buckets Overview -->
-> 📸 **Screenshot Placeholder**: *[GCP Cloud Storage Console showing pydata-amsterdam and pydata-amsterdam-uploads buckets with subfolders]*
+<img width="2050" height="519" alt="image" src="https://github.com/user-attachments/assets/2437f3b0-c2b1-4739-a6fe-4f2413f9c167" />
+
+> 📸 **Screenshot**: *[GCP Cloud Storage Console showing pydata-amsterdam and pydata-amsterdam-uploads buckets with subfolders]*
 
 ```bash
 # 1. Create the Resources bucket (holds pipeline scripts, staging, temp files, and travel posters)
@@ -182,7 +185,9 @@ gcloud storage ls --project=$PROJECT_ID
 Create the BigQuery dataset `analytics_sessions` and table `registrations` to store validated registrations:
 
 <!-- Screenshot Placeholder: BigQuery Dataset and Table Schema -->
-> 📸 **Screenshot Placeholder**: *[BigQuery Studio showing dataset analytics_sessions and schema for table registrations]*
+<img width="2050" height="746" alt="image" src="https://github.com/user-attachments/assets/0eada1fd-9953-4785-860f-a091f00277ce" />
+
+> 📸 **Screenshot**: *[BigQuery Studio showing dataset analytics_sessions and schema for table registrations]*
 
 ```bash
 # 1. Create BigQuery Dataset
@@ -214,7 +219,9 @@ bq show ${PROJECT_ID}:${BQ_DATASET}.${BQ_TABLE}
 Assign the required roles to the service account used by Dataflow workers and Cloud Composer:
 
 <!-- Screenshot Placeholder: IAM & Admin Roles in GCP Console -->
-> 📸 **Screenshot Placeholder**: *[GCP Console IAM & Admin page displaying roles granted to the default Compute Engine Service Account]*
+<img width="2050" height="1098" alt="image" src="https://github.com/user-attachments/assets/7e7737c0-2894-4f59-967a-965ac5a78da9" />
+
+> 📸 **Screenshot**: *[GCP Console IAM & Admin page displaying roles granted to the default Compute Engine Service Account]*
 
 ```bash
 SA_ROLES=(
